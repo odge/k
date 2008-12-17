@@ -33,17 +33,44 @@ Qed.
 
 Definition sublist (l s : list A) := forall x, In x s -> In x l.
 
+Theorem sublist_transitivity (m n o : list A) :
+  sublist m n -> sublist n o -> sublist m o.
+unfold sublist; intros; intuition.
+Qed.
+
 Lemma sublist_cons X Y (o : A) :
   sublist X (o :: Y) -> sublist X Y.
 unfold sublist; simpl; intros X Y o H x in_Y.
 apply H; right; assumption.
 Qed.
 
+Lemma sublist_cons' (o : A) y x : sublist y x -> sublist (o :: y) x.
+  unfold sublist; simpl; intuition.
+Qed.
 
 Definition sublist_satisfies (l : list A) (P : list A -> Prop) :=
   exists s, sublist l s /\ P s.
 
+Theorem permutation_sub_sub (l l' : list A) :
+  Permutation l l' -> sublist l l' /\ sublist l' l.
+intros l l' P'; induction P'; split;
+try repeat match goal with
+  | H : _ /\ _ |- _ => destruct H
+end.
 
+Theorem sublist_nil_nil : sublist nil nil.
+intro; tauto.
+Qed.
+
+apply sublist_nil_nil.
+apply sublist_nil_nil.
+intro; simpl; intro X; destruct X; intuition.
+intro; simpl; intro X; destruct X; intuition.
+intro; simpl; intro X; destruct X; intuition.
+intro; simpl; intro X; destruct X; intuition.
+eapply sublist_transitivity; eauto.
+eapply sublist_transitivity; eauto.
+Qed.
 
 End ListPlus.
 
